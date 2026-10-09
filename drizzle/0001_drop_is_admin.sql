@@ -1,0 +1,1 @@
+ALTER TABLE `allowed_emails` DROP COLUMN `is_admin`;
