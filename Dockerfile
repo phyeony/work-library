@@ -7,7 +7,10 @@ RUN apk add --no-cache python3 make g++
 COPY package.json package-lock.json .npmrc ./
 RUN npx -y npm@11 ci
 COPY . .
-RUN npx -y npm@11 run build && npx -y npm@11 prune --omit=dev
+# SvelteKit validates required env vars during the build. These placeholders only satisfy
+# that check; they are not baked into the output. Real values come from the pod's env.
+RUN DATABASE_URL=:memory: SESSION_SECRET=build-time-placeholder-not-used-at-runtime \
+    npx -y npm@11 run build && npx -y npm@11 prune --omit=dev
 
 FROM node:22-alpine
 WORKDIR /app
